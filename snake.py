@@ -57,23 +57,23 @@ class SnakeGame:
             self.game_over = True
             return False
 
-        # Check for collisions with snake body
         # Debug prints for collision detection
         print(f"\nDebug - Current snake: {self.snake}")
         print(f"Debug - New head position: {new_head}")
         print(f"Debug - Growing: {self.growing}")
         
-        # Always check against all segments except the tail
-        # When growing, the tail won't move, so include it in collision check
+        # When growing, check against ALL segments since none will move
+        # When not growing, check against all segments EXCEPT tail (which will move)
         segments_to_check = self.snake if self.growing else self.snake[:-1]
         print(f"Debug - Checking against segments: {segments_to_check}")
         
-        # Check if new head position is already occupied by snake body
+        # Check for collisions with snake body
         if new_head in segments_to_check:
-            print(f"Debug - Collision! New head {new_head} would collide with snake body")
+            print(f"Debug - Collision! New head {new_head} would collide with snake body at {segments_to_check}")
             self.game_over = True
             return False
 
+        # Move is valid, update snake position
         self.snake.insert(0, new_head)
         
         # Check if food was eaten
@@ -82,8 +82,9 @@ class SnakeGame:
             self.food = self._spawn_food()
             self.growing = True
         else:
+            if not self.growing:  # Only remove tail if not growing
+                self.snake.pop()
             self.growing = False
-            self.snake.pop()
         
         return True
 
