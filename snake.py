@@ -58,26 +58,20 @@ class SnakeGame:
             return False
 
         # Check for collisions with self
-        # When not growing: check against all segments except tail (which will move)
-        # When growing: check against all segments (since none will be removed)
-        check_segments = self.snake[:-1]  # Always exclude tail when not growing
-        
         # Debug print for collision detection
         print(f"\nDebug - New head: {new_head}")
         print(f"Debug - Snake segments: {self.snake}")
         print(f"Debug - Growing: {self.growing}")
         print(f"Debug - Current direction: {self.direction}")
-        print(f"Debug - Checking segments: {check_segments}")
+        
+        # Always check against all current segments of the snake
+        # Moving into any part of the snake (except the tail when not growing) is a collision
+        collision_segments = self.snake[:-1] if not self.growing else self.snake
+        print(f"Debug - Checking segments: {collision_segments}")
         
         # Check if new head position would collide with any current segment
-        if new_head in check_segments:
-            print(f"Debug - Self collision detected at {new_head}")
-            self.game_over = True
-            return False
-            
-        # Special case: when growing, also check against the tail
-        if self.growing and new_head == self.snake[-1]:
-            print(f"Debug - Self collision with tail while growing")
+        if new_head in collision_segments:
+            print(f"Debug - Self collision detected! New head {new_head} would collide with existing snake segment")
             self.game_over = True
             return False
 
