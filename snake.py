@@ -25,6 +25,7 @@ class SnakeGame:
         self.food = self._spawn_food()
         self.score = 0
         self.game_over = False
+        self.growing = False  # Track if snake is currently growing
 
     def _spawn_food(self):
         """Spawn food at a random empty position."""
@@ -50,10 +51,14 @@ class SnakeGame:
         else:  # Direction.RIGHT
             new_head = (head[0], head[1]+1)
 
-        # Check for collisions
+        # Check for collisions with walls
         if (new_head[0] < 0 or new_head[0] >= self.height or
-            new_head[1] < 0 or new_head[1] >= self.width or
-            new_head in self.snake):
+            new_head[1] < 0 or new_head[1] >= self.width):
+            self.game_over = True
+            return False
+
+        # Check for collisions with self
+        if new_head in self.snake:
             self.game_over = True
             return False
 
@@ -63,7 +68,9 @@ class SnakeGame:
         if new_head == self.food:
             self.score += 1
             self.food = self._spawn_food()
+            self.growing = True
         else:
+            self.growing = False
             self.snake.pop()
         
         return True

@@ -9,13 +9,13 @@ import operator
 
 class TwentyFourGame:
     def __init__(self):
-        self.numbers = self._generate_numbers()
         self.operations = {
             '+': operator.add,
             '-': operator.sub,
             '*': operator.mul,
             '/': operator.truediv
         }
+        self.numbers = self._generate_numbers()
 
     def _generate_numbers(self):
         """Generate four random numbers that have at least one solution."""
@@ -54,41 +54,37 @@ class TwentyFourGame:
     def check_solution(self, expression):
         """
         Check if the given expression equals 24.
-        Expression should be in the format: "num1 op num2 op num3 op num4"
+        Supports both simple format (num1 op num2 op num3 op num4)
+        and expressions with parentheses.
         """
         try:
-            # Split expression into tokens
-            tokens = expression.split()
-            if len(tokens) != 7:  # 4 numbers and 3 operators
-                return False, "Invalid expression format"
-
-            # Convert numbers to float and validate they match the game numbers
-            nums = [float(tokens[i]) for i in range(0, 7, 2)]
-            ops = [tokens[i] for i in range(1, 7, 2)]
+            # Extract all numbers from the expression
+            import re
+            nums_in_expr = [int(n) for n in re.findall(r'\d+', expression)]
             
-            # Check if used numbers match the game numbers
-            game_nums_sorted = sorted(self.numbers)
-            solution_nums_sorted = sorted([int(n) for n in nums])
-            if game_nums_sorted != solution_nums_sorted:
+            # Verify all numbers are used exactly once
+            if sorted(nums_in_expr) != sorted(self.numbers):
                 return False, "Numbers don't match the game numbers"
 
-            # Validate operators
-            if not all(op in self.operations for op in ops):
-                return False, "Invalid operators"
+            # Verify only valid operators are used
+            valid_chars = set('0123456789+-*/() ')
+            if not all(c in valid_chars for c in expression):
+                return False, "Invalid characters in expression"
 
-            # Evaluate expression
-            result = nums[0]
-            for i in range(3):
-                result = self.operations[ops[i]](result, nums[i + 1])
+            # Evaluate the expression
+            try:
+                result = eval(expression)
+                if abs(result - 24) < 0.0001:
+                    return True, "Correct! The expression equals 24!"
+                else:
+                    return False, f"Expression equals {result}, not 24"
+            except ZeroDivisionError:
+                return False, "Division by zero is not allowed"
+            except Exception as e:
+                return False, "Invalid expression format"
 
-            # Check if result is 24
-            if abs(result - 24) < 0.0001:
-                return True, "Correct! The expression equals 24!"
-            else:
-                return False, f"Expression equals {result}, not 24"
-
-        except (ValueError, ZeroDivisionError, KeyError) as e:
-            return False, f"Invalid expression: {str(e)}"
+        except Exception as e:
+            return False, "Invalid expression format"
 
 def main():
     """Main game loop."""
