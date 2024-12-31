@@ -58,10 +58,12 @@ class SnakeGame:
             return False
 
         # Check for collisions with self
-        # When growing, check against entire snake
-        # When not growing, exclude the tail since it will be removed
-        snake_body = self.snake[:-1] if not self.growing else self.snake
-        if new_head in snake_body:
+        # Always check against the current snake body except the tail
+        # When growing, also check against the tail since it won't move
+        if new_head in self.snake[:-1]:  # Check against body except tail
+            self.game_over = True
+            return False
+        if self.growing and new_head == self.snake[-1]:  # Check tail when growing
             self.game_over = True
             return False
 

@@ -139,32 +139,40 @@ def test_snake_game():
     print("\nInitial snake position:")
     game.print_board()
     
-    # Move to create self collision
-    print("\nMoving snake to create self collision:")
-    game.move()  # Move to (2, 3)
-    print("\nAfter first move:")
+    # Create a situation where snake will collide with itself
+    print("\nCreating self collision scenario:")
+    
+    # Move right and eat food to grow
+    game.food = (2, 3)  # Place food in path
+    game.move()  # Move to (2, 3) and eat food
+    print("\nAfter eating first food:")
     game.print_board()
     
-    game.food = (3, 3)  # Place food to make snake grow
+    # Place another food and grow again
+    game.food = (2, 4)
     game.move()  # Move to (2, 4) and eat food
-    print("\nAfter eating food:")
+    print("\nAfter eating second food:")
     game.print_board()
     
+    # Move down
     game.change_direction(snake.Direction.DOWN)
-    game.move()  # Move down to (3, 4)
+    game.move()  # Move to (3, 4)
     print("\nAfter moving down:")
     game.print_board()
     
+    # Move left
     game.change_direction(snake.Direction.LEFT)
-    game.move()  # Move left to (3, 3)
+    game.move()  # Move to (3, 3)
     print("\nAfter moving left:")
     game.print_board()
     
+    # Move up - should collide with body
     game.change_direction(snake.Direction.UP)
-    game.move()  # Should collide with body
-    print("\nAfter collision attempt:")
+    game.move()  # Should collide with body at (2, 3)
+    print("\nAfter attempting to move up (should collide):")
     game.print_board()
     print(f"Self collision test - Game over: {game.game_over} (Expected: True)")
+    print(f"Snake position: {game.snake}")  # Print snake segments for debugging
 
 if __name__ == "__main__":
     print("Starting game tests...")
