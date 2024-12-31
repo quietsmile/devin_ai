@@ -132,20 +132,39 @@ def test_snake_game():
     # Test self collision
     print("\nTesting self collision:")
     game = snake.SnakeGame(width=5, height=5)
-    # Make snake longer first
-    game.snake.append((2, 2))  # Add segment to make self-collision possible
-    # Create a path that leads to self collision
-    moves = [
-        snake.Direction.RIGHT,
-        snake.Direction.DOWN,
-        snake.Direction.LEFT,
-        snake.Direction.UP
-    ]
-    for direction in moves:
-        game.change_direction(direction)
-        game.move()
-        game.print_board()
-    print(f"Self collision test - Game over: {game.game_over}")
+    
+    # Set up a specific snake configuration for testing
+    game.snake = [(2, 2), (2, 1)]  # Snake facing right
+    game.direction = snake.Direction.RIGHT
+    print("\nInitial snake position:")
+    game.print_board()
+    
+    # Move to create self collision
+    print("\nMoving snake to create self collision:")
+    game.move()  # Move to (2, 3)
+    print("\nAfter first move:")
+    game.print_board()
+    
+    game.food = (3, 3)  # Place food to make snake grow
+    game.move()  # Move to (2, 4) and eat food
+    print("\nAfter eating food:")
+    game.print_board()
+    
+    game.change_direction(snake.Direction.DOWN)
+    game.move()  # Move down to (3, 4)
+    print("\nAfter moving down:")
+    game.print_board()
+    
+    game.change_direction(snake.Direction.LEFT)
+    game.move()  # Move left to (3, 3)
+    print("\nAfter moving left:")
+    game.print_board()
+    
+    game.change_direction(snake.Direction.UP)
+    game.move()  # Should collide with body
+    print("\nAfter collision attempt:")
+    game.print_board()
+    print(f"Self collision test - Game over: {game.game_over} (Expected: True)")
 
 if __name__ == "__main__":
     print("Starting game tests...")
